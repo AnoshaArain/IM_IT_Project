@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Customer Reviews</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .rating-summary {
+        background: #fff;
+      padding: 12px;
+      border-radius: 12px;
+      margin:  10px;
+      box-shadow: 0 4px 12px rgba(255,165,0,0.3);
+      
+    }
+
+    .rating-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .rating-number {
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .rating-stars {
+      color: orange;
+      font-size: 18px;
+    }
+
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      margin: 4px 0;
+    }
+
+    .bar-bg {
+      flex: 1;
+      height: 8px;
+      background: #eee;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: orange;
+      width: 0%;
+    }
+
+    .review-card {
+      background: #fff;
+      padding: 12px;
+      border-radius: 12px;
+      margin:  10px;
+      box-shadow: 0 4px 12px rgba(255,165,0,0.3);
+      font-size: 13px;
+      border-left: 4px solid orange;
+    }
+
+    .review-card b {
+      font-size: 14px;
+    }
+
+    .review-stars-small {
+      color: orange;
+      font-size: 13px;
+    }
+
+    .review-date {
+      font-size: 11px;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+<h1 style="text-align:center;">Ratings & Reviews</h1>
+
+<!-- ===== RATING SUMMARY ===== -->
+<div class="rating-summary" id="ratingSummary"></div>
+
+<!-- ===== ALL REVIEWS ===== -->
+<div id="reviewList"></div>
+
+<script>
+  const reviews = JSON.parse(localStorage.getItem("reviews")) || [];
+  const ratingSummary = document.getElementById("ratingSummary");
+  const reviewList = document.getElementById("reviewList");
+
+  if (reviews.length === 0) {
+    ratingSummary.innerHTML = "<p>No ratings yet</p>";
+    reviewList.innerHTML = "<p style='text-align:center;'>No reviews yet</p>";
+  } else {
+
+    // ---------- CALCULATIONS ----------
+    let totalStars = 0;
+let count = [0, 0, 0, 0, 0]; // index 0 = 1★, index 4 = 5★
+
+reviews.forEach(r => {
+  const s = parseInt(r.star);
+  if (!isNaN(s) && s >= 1 && s <= 5) { // only valid stars
+    totalStars += s;
+    count[s - 1]++; // increment the right star count
+  }
+});
+
+const avg = reviews.length > 0 ? (totalStars / reviews.length).toFixed(1) : 0;
+    // ---------- SUMMARY UI ----------
+    ratingSummary.innerHTML = `
+      <div class="rating-top">
+        <div class="rating-number">${avg}</div>
+        <div>
+          <div class="rating-stars">${"★".repeat(Math.round(avg))}</div>
+          <small>${reviews.length} ratings</small>
+        </div>
+      </div>
+
+      ${[5,4,3,2,1].map(star => {
+        const c = count[star - 1];
+        const percent = ((c / reviews.length) * 100).toFixed(0);
+        return `
+          <div class="rating-row">
+            <span>${star}★</span>
+            <div class="bar-bg">
+              <div class="bar-fill" style="width:${percent}%"></div>
+            </div>
+            <span>${c}</span>
+          </div>
+        `;
+      }).join("")}
+    `;
+
+    // ---------- REVIEW LIST ----------
+    reviews.reverse().forEach(r => {
+      reviewList.innerHTML += `
+        <div class="review-card">
+          <b>${r.name}</b>
+          <div class="review-stars-small">${"★".repeat(r.star)}</div>
+          <p>${r.text}</p>
+          <div class="review-date">${r.date}</div>
+        </div>
+      `;
+    });
+  }
+</script>
+
+</body>
+</html>
