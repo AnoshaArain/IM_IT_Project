@@ -396,3 +396,11 @@ h2 {
 .star-rating span.active {
   color: orange;
 }
+
+#closeReviewBox {
+    cursor: pointer;
+}
+
+#goToReviewPage {
+ cursor: pointer;   
+}
