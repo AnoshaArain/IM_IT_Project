@@ -10,8 +10,8 @@ if (navLeft) {
   dropdown.innerHTML = `
   <!-- Add in your navbar dropdown -->
 
-    <a href="about.html">About</a>
-    
+    <a href="About.html">About</a>
+    <a href="Contact.html">Contact</a>
     <a href="#" id="openReviewPopup">Reviews</a>
     <a href="payment.html">Payment</a>
   `;
